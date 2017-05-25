@@ -1,12 +1,12 @@
 import json
 import rospy
 from std_msgs.msg import String
-from nao import Nao
+from nao_alproxy import NaoALProxy
 
 
 class NaoTalkerNode():
     def __init__(self):
-        self.nao = Nao()
+        self.nao_alproxy = NaoALProxy()
         self.publisher_nao_angles = rospy.Publisher('nao_angles_topic', String, queue_size=10)
         self.publisher_target_position =rospy.Publisher('nao_target_position', String, queue_size=10)
         rospy.init_node('nao_talker_node', anonymous=True)
@@ -15,9 +15,9 @@ class NaoTalkerNode():
         while not rospy.is_shutdown():
             hello_str = "hello world %s" % rospy.get_time()
             print (hello_str)
-            angles_str = str(self.nao.get_angles())
+            angles_str = str(self.nao_alproxy.get_angles())
             print(angles_str)
-            target_position = str(self.nao.get_target_position())
+            target_position = str(self.nao_alproxy.get_target_position())
             rospy.loginfo(angles_str)
             self.publisher_nao_angles.publish(angles_str)
             self.publisher_target_position.publish(target_position)

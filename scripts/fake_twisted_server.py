@@ -11,7 +11,7 @@ import almath
 class TwistedServer():
 
     def __init__(self):
-        rospy.init_node('twisted_server')
+        rospy.init_node('fake_server')
         self.pub = rospy.Publisher('nao_commands_topic', String, queue_size=10)
 
     def send_message (self, message):

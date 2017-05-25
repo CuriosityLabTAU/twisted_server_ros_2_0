@@ -30,12 +30,13 @@ class NaoALProxy():
     def start_nao(self):
         self.robotConfig = self.motionProxy.getRobotConfig()  # Get the Robot Configuration
         self.motionProxy.rest()
-        self.motionProxy.setStiffnesses("Body", 1.0)
+        #self.motionProxy.setStiffnesses("Body", 1.0)
 
     def parse_message(self, message):
         # message is json string in the form of:  {'action': 'run_behavior', 'parameters': ["movements/introduction_all_0",...]}
         # eval the action and run with parameters.
         # For example, eval result could look like: self,say_text_to_speech(['hello','how are you?'])
+        message = str(message)
         print("parse_message", message)
         message_dict = json.loads(message)
         action = str(message_dict['action'])
@@ -55,7 +56,6 @@ class NaoALProxy():
         #if (action == 'play_audio_file'):
         #    #self.play_audio_file(parameters)
         #    self.eval(action)(parameters)
-
 
     def get_angles(self):
         names = "Body"
