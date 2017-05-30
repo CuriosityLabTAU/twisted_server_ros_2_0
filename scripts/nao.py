@@ -16,7 +16,7 @@ class Nao:
     def __init__(self, server=None):
         self.server = server
         self.publisher = rospy.Publisher('nao_commands', String, queue_size=10)
-        rospy.Subscriber('nao_state', String, self.on_nao_state_msg)
+        rospy.Subscriber('nao_state', String, self.callback_nao_state)
         # self.current_animation = None
         self.doable_animations = None
         # self.current_animation_seq = None
@@ -47,8 +47,8 @@ class Nao:
         #         self.publisher.publish(robot_action)
         self.publisher.publish(message)
 
-    def on_nao_state_msg(self, data):
-        print('on_nao_state_msg: ', data.data)
+    def callback_nao_state (self, data):
+        print('callback_nao_state: ', data.data)
         #if data.data == self.doable_animations[-1]:
         self.send_finish_animation_sequence(data.data)
 
@@ -57,10 +57,15 @@ class Nao:
         print('send_finish_animation_sequence')
         try:
             msg = {'nao': ["express", message]}
+            message_json = json.loads(message)
+            client_ip = str(message_json["client_ip"])
             print('trying to send a message:', msg)
             print('server', self.server)
-            print('protocol', self.server.protocol)
-            self.server.protocol.sendMessage(str(json.dumps(msg)))
+            print('protocol', self.server.protocols[client_ip])
+
+            print("client_ip", client_ip)
+            print("protocols[client_ip]", self.server.protocols[client_ip])
+            self.server.protocols[client_ip].sendMessage(str(json.dumps(msg)))
             print('sent back: ', msg)
         except:
             print('failed to send the message...')

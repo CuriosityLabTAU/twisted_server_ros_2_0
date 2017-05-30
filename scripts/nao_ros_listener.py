@@ -23,7 +23,7 @@ class NaoListenerNode():
         self.publisher.publish(data.data) #publish to nao_state to indicate that the robot command is complete
 
     def callback_nao_state (self, data):
-        print("noa_ros_listener callback_nao_state", data.data)
+        print("nao_ros_listener callback_nao_state", data.data)
 
 if __name__ == '__main__':
     try:

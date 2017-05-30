@@ -20,14 +20,20 @@ import json
 
 
 class EchoProtocol(protocol.Protocol):
+
     def dataReceived(self, data):
+        #called when the client sends a message to the server
+        print("dataReceived", data)
         response = self.factory.app.handle_message(data, self)
 
     def sendMessage(self, msg):
+        #called when sending a message back to the client
+        print("sendMessage",msg)
         self.transport.write(msg)
 
 
 class EchoFactory(protocol.Factory):
+
     def __init__(self, app):
         self.app = app
         self.protocol = EchoProtocol
@@ -41,7 +47,7 @@ class TwistedServerApp(App):
     publishers = {}
     factory = None
     label = None
-    protocol = None
+    protocols = {} # {ip1:protocol, ip2:protocol, ip3:protocol}
 
     def build(self):
         self.label = Label(text="server started\n")
@@ -56,7 +62,30 @@ class TwistedServerApp(App):
         return self.label
 
     def handle_message(self, msg, protocol_in):
-        self.protocol = protocol_in
+        print("twisted_server_ros: handle_message")
+        #print("protocol_in.ip:", protocol_in.ip)
+        #protocol_in_vars = vars(protocol_in)
+        # JUST DID THAT TO FIND WHERE THE CLIENT IP IS
+        # for item in protocol_in_vars.items():
+        #     print("item:", item)
+        #
+        # factory = protocol_in.factory
+        # for itemFactory in vars(factory).items():
+        #     print("itemFactory",itemFactory)
+        #
+        # transport = protocol_in.transport
+        # for itemTransport in vars(transport).items():
+        #     print("itemTransport", itemTransport)
+        #
+        client_ip = protocol_in.transport.client[0] #this is how to find the client ip
+        print("client_ip", client_ip)
+        #if client_ip not in self.protocols_ip:
+        #    print("added new protocol")
+        #    self.protocols_ip.append (client_ip)
+        self.protocols[client_ip]=protocol_in #if the client_ip is not in the dictionary it will be added to it.
+
+
+        print('self.protocol', self.protocols)
         self.label.text = "received:  %s\n" % msg
         try:
             print("msg", msg)
@@ -70,11 +99,13 @@ class TwistedServerApp(App):
                     the_msg = '{' + the_msg
                 if k < (len(spl)-1):
                     the_msg = the_msg + '}'
-                msgs.append(json.loads(the_msg))
+                json_msg = json.loads(the_msg)
+                msgs.append(json_msg)
             print (msgs)
             for m in msgs:
                 for topic, message in m.items():
                     topic = str(topic)
+                    message["client_ip"] = client_ip  #I'm adding ip so that on callback_nao_state I can send the message to the correct client
                     message = json.dumps(message)
                     #print("message",message, "message type", type(message))
                     self.send_message(topic, message)
@@ -90,6 +121,7 @@ class TwistedServerApp(App):
         return msg
 
     def send_message(self, topic, message):
+        print("twisted_server_ros: send_message")
         if topic != 'tega' and topic != 'nao':
             message = str(message)
             if topic not in self.publishers:
@@ -98,12 +130,10 @@ class TwistedServerApp(App):
         print('published to ', topic, message)
 
     def transmit_msg(self, data):
-        print('transmitting ', data.data)
+        print('twisted_server_ros: transmit_msg', data.data)
         self.label.text = 'transmitting ' + str(data.data)
         if self.protocol:
             self.protocol.sendMessage(data.data)
-
-
 
 
 if __name__ == '__main__':

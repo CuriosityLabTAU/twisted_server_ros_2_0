@@ -11,7 +11,7 @@ class NaoALProxy():
 
     def __init__(self):
         # Init the connection to nao
-        self.robotIP = '192.168.0.100'
+        self.robotIP = '192.168.0.101'
         self.port = 9559
         try:
             self.motionProxy = ALProxy("ALMotion", self.robotIP, self.port)
