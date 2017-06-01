@@ -8,8 +8,8 @@ class Nao:
 
     publisher = None
     server = None
-    animations = []
-    current_animation = None
+    #animations = []
+    #current_animation = None
 
 
 
@@ -18,7 +18,7 @@ class Nao:
         self.publisher = rospy.Publisher('nao_commands', String, queue_size=10)
         rospy.Subscriber('nao_state', String, self.callback_nao_state)
         # self.current_animation = None
-        self.doable_animations = None
+        # self.doable_animations = None
         # self.current_animation_seq = None
         #
         # self.pose_list = ['LOOKAT_CHILD', 'LOOKAT_TABLET', 'POSE_FORWARD', 'EXCITED', 'LEFTRIGHTLOOKING', 'HAPPY_UP', 'PROUD', 'SAD']

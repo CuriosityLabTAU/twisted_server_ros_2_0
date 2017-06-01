@@ -11,20 +11,31 @@ class NaoALProxy():
 
     def __init__(self):
         # Init the connection to nao
-        self.robotIP = '192.168.0.101'
+        self.robotIP = '192.168.0.100'
         self.port = 9559
-        try:
-            self.motionProxy = ALProxy("ALMotion", self.robotIP, self.port)
-            self.audioProxy = ALProxy("ALAudioPlayer", self.robotIP, self.port)
-            self.managerProxy = ALProxy("ALBehaviorManager", self.robotIP, self.port)
-            self.postureProxy = ALProxy("ALRobotPosture", self.robotIP, self.port)
-            self.trackerProxy = ALProxy("ALTracker", self.robotIP, self.port)
-            self.tts = ALProxy("ALTextToSpeech", self.robotIP, self.port)
+        self.success = False
 
-        except Exception,e:
-            print "Could not create proxy to ALMotion"
-            print "Error was: ",e
+        i=0
+        while ((not self.success) and i<=7):
+            self.robotIP = '192.168.0.10'+str(i)
+            try:
+                self.motionProxy = ALProxy("ALMotion", self.robotIP, self.port)
+                self.audioProxy = ALProxy("ALAudioPlayer", self.robotIP, self.port)
+                self.managerProxy = ALProxy("ALBehaviorManager", self.robotIP, self.port)
+                self.postureProxy = ALProxy("ALRobotPosture", self.robotIP, self.port)
+                self.trackerProxy = ALProxy("ALTracker", self.robotIP, self.port)
+                self.tts = ALProxy("ALTextToSpeech", self.robotIP, self.port)
+                self.success = True
+                print("self.robotIP", self.robotIP)
+            except Exception,e:
+                print "Could not create proxy to ALMotion"
+                print "Error was: ",e
+                #sys.exit(1)
+            i=i+1
+
+        if (not self.success):
             sys.exit(1)
+
 
 
     def start_nao(self):
