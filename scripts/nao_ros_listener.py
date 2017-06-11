@@ -11,7 +11,7 @@ class NaoListenerNode():
         self.publisher = rospy.Publisher('nao_state', String, queue_size=10)
         rospy.init_node('nao_listener_node') #init a listener:
         rospy.Subscriber('nao_commands', String, self.callback_nao_command)
-        #rospy.Subscriber('nao_state', String, self.callback_nao_state)
+        rospy.Subscriber('nao_state', String, self.callback_nao_state)
         rospy.spin() #spin() simply keeps python from exiting until this node is stopped
 
     def callback_nao_command (self, data):

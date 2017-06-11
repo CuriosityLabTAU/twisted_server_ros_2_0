@@ -55,11 +55,11 @@ class TwistedServerApp(App):
         reactor.listenTCP(8000, self.factory)
         rospy.init_node('twisted_node')
         rospy.Subscriber("to_twisted", String, self.transmit_msg)
-        if STUDY_SITE == 'MIT':
-            self.publishers['tega'] = Tega(self)
-        elif STUDY_SITE == 'TAU':
-            self.publishers['nao'] = Nao(self)
-        return self.label
+        # if STUDY_SITE == 'MIT':
+        #     self.publishers['tega'] = Tega(self)
+        # elif STUDY_SITE == 'TAU':
+        #     self.publishers['nao'] = Nao(self)
+        # return self.label
 
     def handle_message(self, msg, protocol_in):
         print("twisted_server_ros: handle_message")
@@ -132,9 +132,13 @@ class TwistedServerApp(App):
     def transmit_msg(self, data):
         print('twisted_server_ros: transmit_msg', data.data)
         self.label.text = 'transmitting ' + str(data.data)
-        if self.protocol:
-            self.protocol.sendMessage(data.data)
-
-
+        try:
+            #if self.protocol:
+            #    self.protocol.sendMessage(data.data)
+            message_json = json.loads(data.data)
+            client_ip = str(message_json["client_ip"])
+            self.protocols[client_ip].sendMessage(str(json.dumps(message_json)))
+        except:
+            print("failed to transmit_msg")
 if __name__ == '__main__':
     TwistedServerApp().run()

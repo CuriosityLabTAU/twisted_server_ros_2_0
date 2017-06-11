@@ -49,8 +49,7 @@ class Nao:
 
     def callback_nao_state (self, data):
         print('callback_nao_state: ', data.data)
-        #if data.data == self.doable_animations[-1]:
-        self.send_finish_animation_sequence(data.data)
+        #self.send_finish_animation_sequence(data.data)
 
 
     def send_finish_animation_sequence(self,message):
