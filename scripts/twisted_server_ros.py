@@ -54,7 +54,8 @@ class TwistedServerApp(App):
         self.factory = EchoFactory(self)
         reactor.listenTCP(8000, self.factory)
         rospy.init_node('twisted_node')
-        rospy.Subscriber("to_twisted", String, self.transmit_msg)
+        #rospy.Subscriber("to_twisted", String, self.transmit_msg) #not using this
+        rospy.Subscriber("to_tablet", String, self.callback_to_tablet)
         # if STUDY_SITE == 'MIT':
         #     self.publishers['tega'] = Tega(self)
         # elif STUDY_SITE == 'TAU':
@@ -129,7 +130,20 @@ class TwistedServerApp(App):
         self.publishers[topic].publish(message)
         print('published to ', topic, message)
 
-    def transmit_msg(self, data):
+
+    # def transmit_msg(self, data):
+    #     print('twisted_server_ros: transmit_msg', data.data)
+    #     self.label.text = 'transmitting ' + str(data.data)
+    #     try:
+    #         # if self.protocol:
+    #         #    self.protocol.sendMessage(data.data)
+    #         message_json = json.loads(data.data)
+    #         client_ip = str(message_json["client_ip"])
+    #         self.protocols[client_ip].sendMessage(str(json.dumps(message_json)))
+    #     except:
+    #         print("failed to transmit_msg")
+
+    def callback_to_tablet (self, data):
         print('twisted_server_ros: transmit_msg', data.data)
         self.label.text = 'transmitting ' + str(data.data)
         try:
