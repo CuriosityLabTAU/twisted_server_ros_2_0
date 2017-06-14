@@ -18,6 +18,7 @@ class NaoALProxy():
         i=0
         while ((not self.success) and i<=7):
             self.robotIP = '192.168.0.10'+str(i)
+            # self.robotIP = '192.168.0.104'
             try:
                 self.motionProxy = ALProxy("ALMotion", self.robotIP, self.port)
                 self.audioProxy = ALProxy("ALAudioPlayer", self.robotIP, self.port)
@@ -41,7 +42,7 @@ class NaoALProxy():
     def start_nao(self):
         self.robotConfig = self.motionProxy.getRobotConfig()  # Get the Robot Configuration
         self.motionProxy.rest()
-        # self.motionProxy.setStiffnesses("Body", 1.0)
+        self.motionProxy.setStiffnesses("Body", 1.0)
 
     def parse_message(self, message):
         # message is json string in the form of:  {'action': 'run_behavior', 'parameters': ["movements/introduction_all_0",...]}
@@ -81,8 +82,13 @@ class NaoALProxy():
 
     def run_behavior(self, parameters):
         ''' run a behavior installed on nao. parameters is a behavior. For example "movements/introduction_all_0" '''
-        behavior = str(parameters[0])
-        self.managerProxy.post.runBehavior(behavior)
+        try:
+            behavior = str(parameters[0])
+            print("behavior",behavior)
+            self.managerProxy.post.runBehavior(behavior)
+        except Exception, e:
+            print "Could not create proxy to ALMotion"
+            print "Error was: ", e
 
     def print_installed_behaviors(self):
         # print all the behaviors installed on nao
@@ -179,3 +185,15 @@ class NaoALProxy():
             self.change_pose('HeadPitch,HeadYaw;10.0,10.0;0.05')
             self.change_pose('HeadPitch,HeadYaw;0.0,0.0;0.1')
 
+
+
+
+if __name__ == "__main__":
+    nao_alproxy = NaoALProxy()
+    nao_alproxy.start_nao()
+    time.sleep(3)
+    message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/raise_the_roof/raise_the_roof']}
+    message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/r1']}
+    # message_json = {'action': 'say_text_to_speech', 'parameters': ['hello']}
+    nao_alproxy.print_installed_behaviors()
+    nao_alproxy.parse_message(str(json.dumps(message_json)))
