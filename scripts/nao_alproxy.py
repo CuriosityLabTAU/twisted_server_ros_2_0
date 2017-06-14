@@ -52,7 +52,10 @@ class NaoALProxy():
         print("parse_message", message)
         message_dict = json.loads(message)
         action = str(message_dict['action'])
-        parameters = message_dict['parameters']
+        if 'parameters' in message_dict:
+            parameters = message_dict['parameters']
+        else:
+            parameters = ""
         print(str("self."+action+"("+str(parameters)+")"))
         eval(str("self."+action+"("+str(parameters)+")"))
 
@@ -85,7 +88,14 @@ class NaoALProxy():
         try:
             behavior = str(parameters[0])
             print("behavior",behavior)
-            self.managerProxy.post.runBehavior(behavior)
+            if len(parameters) > 1:
+                if parameters[1] == 'wait':
+                    self.managerProxy.runBehavior(behavior)
+                else:
+                    self.managerProxy.post.runBehavior(behavior)
+            else:
+                self.managerProxy.post.runBehavior(behavior)
+
         except Exception, e:
             print "Could not create proxy to ALMotion"
             print "Error was: ", e
@@ -145,6 +155,8 @@ class NaoALProxy():
         print(str(target_position))
         return (str(target_position))
 
+    def rest(self):
+        self.motionProxy.rest()
 
     def change_pose(self, data_str):
         # data_str = 'name1, name2;target1, target2;pMaxSpeedFraction'
