@@ -18,7 +18,7 @@ class NaoALProxy():
         i=0
         while ((not self.success) and i<=7):
             self.robotIP = '192.168.0.10'+str(i)
-            # self.robotIP = '192.168.0.104'
+            self.robotIP = '192.168.0.104'
             try:
                 self.motionProxy = ALProxy("ALMotion", self.robotIP, self.port)
                 self.audioProxy = ALProxy("ALAudioPlayer", self.robotIP, self.port)
@@ -197,7 +197,8 @@ class NaoALProxy():
             self.change_pose('HeadPitch,HeadYaw;10.0,10.0;0.05')
             self.change_pose('HeadPitch,HeadYaw;0.0,0.0;0.1')
 
-
+    def sound_tracker(self):
+        print('sound_tracker')
 
 
 if __name__ == "__main__":
