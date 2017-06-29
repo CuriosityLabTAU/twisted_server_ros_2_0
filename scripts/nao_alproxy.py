@@ -7,7 +7,7 @@ import time
 import argparse
 
 
-class NaoALProxy():
+class NaoALProxy:
 
     def __init__(self):
         # Init the connection to nao
@@ -18,7 +18,7 @@ class NaoALProxy():
         i=0
         while ((not self.success) and i<=7):
             self.robotIP = '192.168.0.10'+str(i)
-            self.robotIP = '192.168.0.104'
+            #self.robotIP = '192.168.0.104'
             try:
                 self.motionProxy = ALProxy("ALMotion", self.robotIP, self.port)
                 self.audioProxy = ALProxy("ALAudioPlayer", self.robotIP, self.port)
@@ -158,6 +158,9 @@ class NaoALProxy():
     def rest(self):
         self.motionProxy.rest()
 
+    def wake_up(self):
+        self.motionProxy.wakeUp()
+
     def change_pose(self, data_str):
         # data_str = 'name1, name2;target1, target2;pMaxSpeedFraction'
 
@@ -206,7 +209,24 @@ if __name__ == "__main__":
     nao_alproxy.start_nao()
     time.sleep(3)
     message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/raise_the_roof/raise_the_roof']}
-    message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/r1']}
     # message_json = {'action': 'say_text_to_speech', 'parameters': ['hello']}
     nao_alproxy.print_installed_behaviors()
+    message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/robotator_behaviors/TU01',"wait"]}
+    #nao_alproxy.parse_message(str(json.dumps(message_json)))
+    message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/robotator_behaviors/TU02',"wait"]}
+    #nao_alproxy.parse_message(str(json.dumps(message_json)))
+    message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/robotator_behaviors/TU05',"wait"]}
+    #nao_alproxy.parse_message(str(json.dumps(message_json)))
+    message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/robotator_behaviors/one_min_left',"wait"]}
+
+
+
     nao_alproxy.parse_message(str(json.dumps(message_json)))
+    #message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/r14', 'wait']}
+    #nao_alproxy.parse_message(str(json.dumps(message_json)))
+    # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/r57', 'wait']}
+    # nao_alproxy.parse_message(str(json.dumps(message_json)))
+    # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/r58', 'wait']}
+    # nao_alproxy.parse_message(str(json.dumps(message_json)))
+    # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/r51', 'wait']}
+    # nao_alproxy.parse_message(str(json.dumps(message_json)))
