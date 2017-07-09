@@ -2,11 +2,12 @@ import json
 import rospy
 from std_msgs.msg import String
 from nao_alproxy import NaoALProxy
+import sys
 
 
 class NaoTalkerNode():
-    def __init__(self):
-        self.nao_alproxy = NaoALProxy()
+    def __init__(self, nao_ip=None):
+        self.nao_alproxy = NaoALProxy(nao_ip)
         self.publisher_nao_angles = rospy.Publisher('nao_angles_topic', String, queue_size=10)
         self.publisher_target_position =rospy.Publisher('nao_target_position', String, queue_size=10)
         rospy.init_node('nao_talker_node', anonymous=True)
@@ -26,6 +27,10 @@ class NaoTalkerNode():
 
 if __name__ == '__main__':
     try:
-        nao = NaoTalkerNode()
+        # from command line: first input is an optional nao_ip
+        if len(sys.argv) > 1:
+            nao = NaoTalkerNode(sys.argv[1])
+        else:
+            nao = NaoTalkerNode()
     except rospy.ROSInterruptException:
         pass
