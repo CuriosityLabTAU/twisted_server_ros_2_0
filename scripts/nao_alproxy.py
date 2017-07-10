@@ -15,8 +15,8 @@ class NaoALProxy:
         self.port = 9559
         self.success = False
 
-        i=0
-        while ((not self.success) and i<=7):
+        i=8
+        while ((not self.success) and i<=8):
             if nao_ip is None:
                 self.robotIP = '192.168.0.10'+str(i)
             else:
@@ -57,7 +57,8 @@ class NaoALProxy:
             parameters = message_dict['parameters']
         else:
             parameters = ""
-        # print(str("self."+action+"("+str(parameters)+")"))
+        print("PARSE_MESSAGE")
+        print(str("self."+action+"("+str(parameters)+")"))
         eval(str("self."+action+"("+str(parameters)+")"))
 
         #print("action=",action)
@@ -162,6 +163,25 @@ class NaoALProxy:
 
     def wake_up(self):
         self.motionProxy.wakeUp()
+
+    def look_at(self, parameters):
+        vect2 = parameters[0]
+        fractionmaxspeed = parameters[1]
+        use = parameters[2]
+        self.trackerProxy.lookAt(vect2, fractionmaxspeed, use)
+
+    def point_at(self,parameters):
+        print('pointAt', parameters)
+        effector = 'RArm'
+        vect = parameters[0]
+        fractionmaxspeed = parameters[1]
+        use = parameters[2]
+        self.trackerProxy.pointAt(effector, vect, fractionmaxspeed, use)
+
+    def open_hand(self, parameters):
+        print('open_hand', parameters)
+        hand_name = parameters[0]
+        self.motionProxy.openHand('RHand')
 
     def change_pose(self, data_str):
         # data_str = 'name1, name2;target1, target2;pMaxSpeedFraction'

@@ -17,7 +17,7 @@ class NaoListenerNode():
         rospy.spin() #spin() simply keeps python from exiting until this node is stopped
 
     def callback_to_nao (self, data):
-        # print("callback_robotator", data.data)
+        print("callback_robotator", data.data)
         message = data.data
         rospy.loginfo(message)
         self.nao_alproxy.parse_message(message)
