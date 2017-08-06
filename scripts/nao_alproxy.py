@@ -15,7 +15,7 @@ class NaoALProxy:
         self.port = 9559
         self.success = False
 
-        i=1
+        i=0
         while ((not self.success) and i<=8):
             if nao_ip is None:
                 self.robotIP = '192.168.0.10'+str(i)
