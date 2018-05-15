@@ -221,7 +221,7 @@ class NaoALProxy:
         self.motionProxy.openHand('RHand')
 
     def change_pose(self, data_str):
-        # data_str = 'name1, name2;target1, target2;pMaxSpeedFraction' #e
+        # data_str = 'name1, name2;target1, target2;pMaxSpeedFraction' #er
 
         info = data_str.split(';')
         pNames = info[0].split(',')
