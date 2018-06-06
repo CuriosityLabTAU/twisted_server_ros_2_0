@@ -284,7 +284,12 @@ class NaoALProxy:
             animation = thinking_ani[np.random.randint(0, len(thinking_ani))]
         elif gesture == "explain":
             animation = explain_ani[np.random.randint(0, len(explain_ani))]
-        self.run_behavior(animation, wait)
+        # self.run_behavior(animation, wait)
+
+        the_behavior = [animation]
+        if wait:
+            the_behavior.append('wait')
+        self.run_behavior(the_behavior)
 
     def sound_tracker(self):
         print('sound_tracker')
@@ -313,14 +318,20 @@ if __name__ == "__main__":
 
     # nao_alproxy.parse_message(str(json.dumps(message_json)))
     # print('time1', time.time())
-    message_json = {'action': 'play_audio_file', 'parameters': ['/home/nao/naoqi/sounds/dyslexia/s_w15_m7.wav','/home/nao/naoqi/sounds/dyslexia/other_response1.wav']}
-    # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/movements/point_to_1', 'wait']}
+    #message_json = {'action': 'play_audio_file', 'parameters': ['/home/nao/naoqi/sounds/dyslexia/s_w15_m7.wav','/home/nao/naoqi/sounds/dyslexia/other_response1.wav']}
+    # message_json = {'action': 'play_audio_file', 'parameters': ['/home/nao/wav/ask_again_0.wav']}  # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/movements/point_to_1', 'wait']}
     # message_json = {'action': 'change_pose_1', 'parameters': ['test']}
-    nao_alproxy.parse_message(str(json.dumps(message_json)))
-    # print('time2',  time.time())
-    # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/r57', 'wait']}
     # nao_alproxy.parse_message(str(json.dumps(message_json)))
+    # print('time2',  time.time())
+    #message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/r57', 'wait']}
+    #nao_alproxy.parse_message(str(json.dumps(message_json)))
     # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/r58', 'wait']}
     # nao_alproxy.parse_message(str(json.dumps(message_json)))
-    # message_json = {'action': 'run_behavior', 'parameters': ['physical_curiosity/m/the_end', 'wait']}
-    # nao_alproxy.parse_message(str(json.dumps(message_json)))
+    message_json = {'action': 'run_behavior', 'parameters': ['facilitator-6ea3b8/general_group_agree', 'wait']}
+    nao_alproxy.parse_message(str(json.dumps(message_json)))
+    # nao_alproxy.wake_up()
+
+    message_json = {'action': 'play_audio_file', 'parameters': ['/home/nao/naoqi/sounds/dyslexia/s_w15_m7.wav']}
+    nao_alproxy.parse_message(str(json.dumps(message_json)))
+
+    # nao_alproxy.do_animation_noam("explain", wait=True)
