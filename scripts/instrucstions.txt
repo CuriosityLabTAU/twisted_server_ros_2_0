@@ -1,0 +1,10 @@
+1. connect to router (TPLINK)
+2. Turn on NAO (in japanese sitting mode)
+3. Get IP address --> to change to correct network
+   4. enter th IP address, with psw
+4. Choeograph
+5. Turn off autonomous mode
+***
+6. >>roscore
+7. twisted_server_ros
+7. nao_ros_listener

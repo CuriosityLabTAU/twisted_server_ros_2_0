@@ -308,15 +308,15 @@ if __name__ == "__main__":
     # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/robotator_behaviors/TU05',"wait"]}
     #nao_alproxy.parse_message(str(json.dumps(message_json)))
     # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/robotator_behaviors/one_min_left',"wait"]}
-
+    nao_alproxy.rest()
 
 
     # nao_alproxy.parse_message(str(json.dumps(message_json)))
     # print('time1', time.time())
-    message_json = {'action': 'play_audio_file', 'parameters': ['/home/nao/naoqi/sounds/dyslexia/s_w15_m7.wav','/home/nao/naoqi/sounds/dyslexia/other_response1.wav']}
+    # message_json = {'action': 'play_audio_file', 'parameters': ['/home/nao/naoqi/sounds/dyslexia/s_w15_m7.wav','/home/nao/naoqi/sounds/dyslexia/other_response1.wav']}
     # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/movements/point_to_1', 'wait']}
     # message_json = {'action': 'change_pose_1', 'parameters': ['test']}
-    nao_alproxy.parse_message(str(json.dumps(message_json)))
+    # nao_alproxy.parse_message(str(json.dumps(message_json)))
     # print('time2',  time.time())
     # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/r57', 'wait']}
     # nao_alproxy.parse_message(str(json.dumps(message_json)))
