@@ -90,6 +90,28 @@ class NaoALProxy:
         return self.motionProxy.getAngles(names, use_sensors)
 
 
+    def run_behavior_and_sound(self, parameters):
+        ''' run a behavior installed on nao. parameters is a behavior. For example ["movements/introduction_all_0"] '''
+        try:
+            behavior = str(parameters[0])
+            sound = str(parameters[1])
+            print("behavior and sound ", behavior, sound)
+
+            self.managerProxy.post.runBehavior(behavior)
+            self.audioProxy.playFile(str(sound), 1.0, 0.0)
+
+            # if len(parameters) > 1:
+            #     if parameters[1] == 'wait':
+            #         self.managerProxy.runBehavior(behavior)
+            #
+            #     else:
+            #         self.managerProxy.post.runBehavior(behavior)
+            # else:
+            #     self.managerProxy.post.runBehavior(behavior)
+
+        except Exception, e:
+            print "Could not create proxy to ALMotion"
+            print "Error was: ", e
 
 
     def run_behavior(self, parameters):
