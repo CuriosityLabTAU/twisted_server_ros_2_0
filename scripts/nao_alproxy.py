@@ -48,6 +48,9 @@ class NaoALProxy:
         self.robotConfig = self.motionProxy.getRobotConfig()  # Get the Robot Configuration
         #self.motionProxy.rest()
         self.motionProxy.setStiffnesses("Body", 1.0)
+        self.motionProxy.setBreathEnabled('Body', True)
+
+        self.installed_behaviors = self.get_installed_behaviors()
 
     def parse_message(self, message):
         # message is json string in the form of:  {'action': 'run_behavior', 'parameters': ["movements/introduction_all_0",...]}
@@ -61,8 +64,8 @@ class NaoALProxy:
             parameters = message_dict['parameters']
         else:
             parameters = ""
-        print("PARSE_MESSAGE")
-        print(str("self."+action+"("+str(parameters)+")"))
+        # print("PARSE_MESSAGE")
+        # print(str("self."+action+"("+str(parameters)+")"))
         eval(str("self."+action+"("+str(parameters)+")"))
 
         #print("action=",action)
@@ -96,8 +99,12 @@ class NaoALProxy:
             behavior = str(parameters[0])
             sound = str(parameters[1])
             print("behavior and sound ", behavior, sound)
+            if behavior not in self.installed_behaviors:
+                print('Nao listener: unknown behavior ', behavior, '. Change to Explain_1')
+                behavior = 'animations/Stand/Gestures/Explain_1'
 
             self.managerProxy.post.runBehavior(behavior)
+
             self.audioProxy.playFile(str(sound), 1.0, 0.0)
 
             # if len(parameters) > 1:
@@ -118,7 +125,7 @@ class NaoALProxy:
         ''' run a behavior installed on nao. parameters is a behavior. For example ["movements/introduction_all_0"] '''
         try:
             behavior = str(parameters[0])
-            print("behavior",behavior)
+            # print("behavior",behavior)
             if len(parameters) > 1:
                 if parameters[1] == 'wait':
                     self.managerProxy.runBehavior(behavior)
@@ -132,19 +139,23 @@ class NaoALProxy:
             print "Could not create proxy to ALMotion"
             print "Error was: ", e
 
-    def print_installed_behaviors(self):
+    def get_installed_behaviors(self):
         # print all the behaviors installed on nao
         names = self.managerProxy.getInstalledBehaviors()
-        print "Behaviors on the robot:"
-        print names
+        # print "Behaviors on the robot:"
+        # print names
+        return names
 
     def set_autonomous_state(self, parameters):
-        # put nao in autonomous state
-        # parameters in the form of ['solitary']
-        # http://doc.aldebaran.com/2-1/naoqi/core/autonomouslife.html
-        state=str(parameters[0]) # 'solitary'
-        # set the robot to be on autonomous mode
-        self.autonomous.setState(state)
+        try:
+            # put nao in autonomous state
+            # parameters in the form of ['solitary']
+            # http://doc.aldebaran.com/2-1/naoqi/core/autonomouslife.html
+            state=str(parameters[0]) # 'solitary'
+            # set the robot to be on autonomous mode
+            self.autonomous.setState(state)
+        except:
+            print('ERROR', 'nao_alproxy', 'Already in live mode')
 
     def say_text_to_speech (self, parameters):
         # make nao say the string text
