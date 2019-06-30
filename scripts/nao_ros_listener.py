@@ -9,17 +9,17 @@ class NaoListenerNode():
     def __init__(self, nao_ip=None):
         self.nao_alproxy = NaoALProxy(nao_ip)
         self.nao_alproxy.start_nao()
-        self.publisher = rospy.Publisher('nao_state', String, queue_size=10)
+        self.publisher = rospy.Publisher('nao_state', String, queue_size=1)
         rospy.init_node('nao_listener_node') #init a listener:
-        rospy.Subscriber('to_nao', String, self.callback_to_nao)
+        rospy.Subscriber('to_nao', String, self.callback_to_nao, queue_size=1)
         # rospy.Subscriber('nao_state', String, self.callback_nao_state)
         print('=========== NaoListenerNode =============')
         rospy.spin() #spin() simply keeps python from exiting until this node is stopped
 
     def callback_to_nao (self, data):
-        print("callback_robotator", data.data)
+        # print("callback_robotator", data.data)
         message = data.data
-        rospy.loginfo(message)
+        # rospy.loginfo(message)
         self.nao_alproxy.parse_message(message)
         # print("finished", message)
         self.publisher.publish(data.data) #publish to nao_state to indicate that the robot command is complete

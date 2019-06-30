@@ -48,6 +48,9 @@ class NaoALProxy:
         self.robotConfig = self.motionProxy.getRobotConfig()  # Get the Robot Configuration
         #self.motionProxy.rest()
         self.motionProxy.setStiffnesses("Body", 1.0)
+        self.motionProxy.setBreathEnabled('Body', True)
+
+        self.installed_behaviors = self.get_installed_behaviors()
 
     def parse_message(self, message):
         # message is json string in the form of:  {'action': 'run_behavior', 'parameters': ["movements/introduction_all_0",...]}
@@ -61,8 +64,8 @@ class NaoALProxy:
             parameters = message_dict['parameters']
         else:
             parameters = ""
-        print("PARSE_MESSAGE")
-        print(str("self."+action+"("+str(parameters)+")"))
+        # print("PARSE_MESSAGE")
+        # print(str("self."+action+"("+str(parameters)+")"))
         eval(str("self."+action+"("+str(parameters)+")"))
 
         #print("action=",action)
@@ -90,13 +93,39 @@ class NaoALProxy:
         return self.motionProxy.getAngles(names, use_sensors)
 
 
+    def run_behavior_and_sound(self, parameters):
+        ''' run a behavior installed on nao. parameters is a behavior. For example ["movements/introduction_all_0"] '''
+        try:
+            behavior = str(parameters[0])
+            sound = str(parameters[1])
+            print("behavior and sound ", behavior, sound)
+            if behavior not in self.installed_behaviors:
+                print('Nao listener: unknown behavior ', behavior, '. Change to Explain_1')
+                behavior = 'animations/Stand/Gestures/Explain_1'
+
+            self.managerProxy.post.runBehavior(behavior)
+
+            self.audioProxy.playFile(str(sound), 1.0, 0.0)
+
+            # if len(parameters) > 1:
+            #     if parameters[1] == 'wait':
+            #         self.managerProxy.runBehavior(behavior)
+            #
+            #     else:
+            #         self.managerProxy.post.runBehavior(behavior)
+            # else:
+            #     self.managerProxy.post.runBehavior(behavior)
+
+        except Exception, e:
+            print "Could not create proxy to ALMotion"
+            print "Error was: ", e
 
 
     def run_behavior(self, parameters):
         ''' run a behavior installed on nao. parameters is a behavior. For example ["movements/introduction_all_0"] '''
         try:
             behavior = str(parameters[0])
-            print("behavior",behavior)
+            # print("behavior",behavior)
             if len(parameters) > 1:
                 if parameters[1] == 'wait':
                     self.managerProxy.runBehavior(behavior)
@@ -110,19 +139,23 @@ class NaoALProxy:
             print "Could not create proxy to ALMotion"
             print "Error was: ", e
 
-    def print_installed_behaviors(self):
+    def get_installed_behaviors(self):
         # print all the behaviors installed on nao
         names = self.managerProxy.getInstalledBehaviors()
-        print "Behaviors on the robot:"
-        print names
+        # print "Behaviors on the robot:"
+        # print names
+        return names
 
     def set_autonomous_state(self, parameters):
-        # put nao in autonomous state
-        # parameters in the form of ['solitary']
-        # http://doc.aldebaran.com/2-1/naoqi/core/autonomouslife.html
-        state=str(parameters[0]) # 'solitary'
-        # set the robot to be on autonomous mode
-        self.autonomous.setState(state)
+        try:
+            # put nao in autonomous state
+            # parameters in the form of ['solitary']
+            # http://doc.aldebaran.com/2-1/naoqi/core/autonomouslife.html
+            state=str(parameters[0]) # 'solitary'
+            # set the robot to be on autonomous mode
+            self.autonomous.setState(state)
+        except:
+            print('ERROR', 'nao_alproxy', 'Already in live mode')
 
     def say_text_to_speech (self, parameters):
         # make nao say the string text
@@ -221,7 +254,7 @@ class NaoALProxy:
         self.motionProxy.openHand('RHand')
 
     def change_pose(self, data_str):
-        # data_str = 'name1, name2;target1, target2;pMaxSpeedFraction' #e
+        # data_str = 'name1, name2;target1, target2;pMaxSpeedFraction' #er
 
         info = data_str.split(';')
         pNames = info[0].split(',')
@@ -284,7 +317,12 @@ class NaoALProxy:
             animation = thinking_ani[np.random.randint(0, len(thinking_ani))]
         elif gesture == "explain":
             animation = explain_ani[np.random.randint(0, len(explain_ani))]
-        self.run_behavior(animation, wait)
+        # self.run_behavior(animation, wait)
+
+        the_behavior = [animation]
+        if wait:
+            the_behavior.append('wait')
+        self.run_behavior(the_behavior)
 
     def sound_tracker(self):
         print('sound_tracker')
@@ -308,19 +346,25 @@ if __name__ == "__main__":
     # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/robotator_behaviors/TU05',"wait"]}
     #nao_alproxy.parse_message(str(json.dumps(message_json)))
     # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/robotator_behaviors/one_min_left',"wait"]}
-    nao_alproxy.rest()
+
 
 
     # nao_alproxy.parse_message(str(json.dumps(message_json)))
     # print('time1', time.time())
-    # message_json = {'action': 'play_audio_file', 'parameters': ['/home/nao/naoqi/sounds/dyslexia/s_w15_m7.wav','/home/nao/naoqi/sounds/dyslexia/other_response1.wav']}
-    # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/movements/point_to_1', 'wait']}
+    #message_json = {'action': 'play_audio_file', 'parameters': ['/home/nao/naoqi/sounds/dyslexia/s_w15_m7.wav','/home/nao/naoqi/sounds/dyslexia/other_response1.wav']}
+    # message_json = {'action': 'play_audio_file', 'parameters': ['/home/nao/wav/ask_again_0.wav']}  # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/movements/point_to_1', 'wait']}
     # message_json = {'action': 'change_pose_1', 'parameters': ['test']}
     # nao_alproxy.parse_message(str(json.dumps(message_json)))
     # print('time2',  time.time())
-    # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/r57', 'wait']}
-    # nao_alproxy.parse_message(str(json.dumps(message_json)))
+    #message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/r57', 'wait']}
+    #nao_alproxy.parse_message(str(json.dumps(message_json)))
     # message_json = {'action': 'run_behavior', 'parameters': ['robot_facilitator-ad2c5c/r58', 'wait']}
     # nao_alproxy.parse_message(str(json.dumps(message_json)))
-    # message_json = {'action': 'run_behavior', 'parameters': ['physical_curiosity/m/the_end', 'wait']}
-    # nao_alproxy.parse_message(str(json.dumps(message_json)))
+    message_json = {'action': 'run_behavior', 'parameters': ['facilitator-6ea3b8/general_group_agree', 'wait']}
+    nao_alproxy.parse_message(str(json.dumps(message_json)))
+    # nao_alproxy.wake_up()
+
+    message_json = {'action': 'play_audio_file', 'parameters': ['/home/nao/naoqi/sounds/dyslexia/s_w15_m7.wav']}
+    nao_alproxy.parse_message(str(json.dumps(message_json)))
+
+    # nao_alproxy.do_animation_noam("explain", wait=True)
