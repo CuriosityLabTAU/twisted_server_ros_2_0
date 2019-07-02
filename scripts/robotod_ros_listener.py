@@ -104,7 +104,10 @@ class RobotodListenerNode():
 
         self.block_name = parameters[0] + '.new'
         self.sound_filename = parameters[1] + '.mp3'
-        self.lip_filename = parameters[1] + '.csv'
+        if len(parameters) > 2:
+            self.lip_filename = parameters[2] + '.csv'
+        else:
+            self.lip_filename = parameters[1] + '.csv'
 
         self.load_block(self.block_name)
         self.play()
