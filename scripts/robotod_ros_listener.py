@@ -35,6 +35,8 @@ class RobotodListenerNode():
         self.publisher = rospy.Publisher('/dxl/command_position', CommandPosition, queue_size=10)
         self.rifd_sub = rospy.Subscriber('/rfid', String, self.callback)
         rospy.Subscriber('to_robotod', String, self.callback_to_robotod)
+        self.state_publisher = rospy.Publisher('robotod_state', String, queue_size=1)
+
 
         pygame.init()
         pygame.mixer.init()
@@ -110,7 +112,7 @@ class RobotodListenerNode():
         # self.play_sound()
         # self.play_lip()
 
-
+        self.state_publisher.publish(data.data)
 
 
     def test_motors(self):
